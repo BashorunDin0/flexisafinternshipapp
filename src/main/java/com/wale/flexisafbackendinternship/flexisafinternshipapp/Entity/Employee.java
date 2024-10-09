@@ -22,6 +22,8 @@ public class Employee {
     private String lastName;
     @Column(nullable = false, unique = true)
     private String email;
+    @Column(name = "user_name")
+    private String username;
     @Lob
     @Column(name = "profile_picture")
     private byte[] profilePicture;
