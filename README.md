@@ -71,3 +71,51 @@ public class EmployeeManagementApplication {
 }
 @SpringBootApplication: This annotation is used to mark the main class of a Spring Boot application. It combines the functionality of @Configuration, @EnableAutoConfiguration, and @ComponentScan.
 SpringApplication.run: This method launches the application.
+
+# Spring Boot Application with Flyway Database Migrations
+
+The project has included demonstration on how to use Flyway for managing database schema migrations in a Spring Boot application. Flyway is configured to handle schema changes automatically through versioned SQL migration scripts.
+
+## Features
+- **Spring Boot** and **Flyway** integration for database migration.
+- Initial migration to create the `employees` table.
+- A second migration to add the `age` column to the `employees` table.
+
+## Technologies Used
+- Spring Boot
+- Flyway for database migrations
+- PostgreSQL (or any other RDBMS)
+
+## Database Migrations
+
+Flyway is set up to manage schema changes using SQL migration scripts located in the `src/main/resources/db/migration/` directory.
+
+### 1. Initial Migration (`V1__Create_employees_table.sql`)
+The first migration script creates the `employees` table with the following fields:
+- `id` (Primary Key)
+- `first_name`
+- `last_name`
+- `email`
+- `username`
+- `profile_picture`
+- `address`
+- `gender`
+- `created_date` (Automatically generated timestamp)
+- `updated_date` (Automatically updated timestamp)
+
+**Migration Script**: [`V1__Create_employees_table.sql`](src/main/resources/db/migration/V1__Create_employees_table.sql)
+
+```sql
+CREATE TABLE employees (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    first_name VARCHAR(255),
+    last_name VARCHAR(255),
+    email VARCHAR(255) NOT NULL UNIQUE,
+    user_name VARCHAR(255),
+    profile_picture LONGBLOB,
+    address VARCHAR(255),
+    gender VARCHAR(50),
+    created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
