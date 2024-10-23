@@ -76,25 +76,6 @@ Limitations of Field Injection:
 Testability: More difficult to test because it requires reflection to inject mock dependencies.
 Immutability: Fields are not final, making them mutable after object creation.
 Implicit Dependencies: Dependencies are not explicitly listed in the constructor, reducing clarity.
-Getting Started
-Prerequisites
-JDK 11 or later
-Maven 3.6+
-IDE (e.g., IntelliJ, Eclipse)
-Postman or cURL (for testing the API)
-Running the Application
-Clone the repository:
-bash
-Copy code
-git clone https://github.com/your-username/employee-management-api.git
-Navigate to the project directory:
-bash
-Copy code
-cd employee-management-api
-Build and run the application:
-bash
-Copy code
-mvn spring-boot:run
 
 Conclusion
 This project demonstrates different ways to implement Dependency Injection in Spring Boot using constructors, setters, and fields. Each method has its advantages and use cases, but constructor injection is generally the preferred method for required dependencies due to its benefits in immutability and testability.
