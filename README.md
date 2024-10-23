@@ -1,121 +1,84 @@
-Employee Entity with Annotations - Spring Boot Project
-Overview
-This project demonstrates a Spring Boot application that manages employee data using Postgresql relational database, while using Hibernate annotation to design a database table(Entity) with atleast 10 fields. The Employee class represents an entity with fields like id, firstName, lastName, email, profilePicture, address, gender, and timestamps for creation and modification.
+This project is a simple Spring Boot-based REST API for managing employee data. It demonstrates how to use Dependency Injection (DI) in Spring using different methods such as constructor injection, setter injection, and field injection.
 
-Dependencies
-The project uses the following dependencies:
+Features
+Create, read, update, and delete (CRUD) operations on employee entities.
+Implements best practices in Spring for dependency injection.
+Example usage of @RestController, @Service, and @Repository annotations.
+DTO pattern for data transfer.
+Dependency Injection Overview
+In Spring, Dependency Injection (DI) allows objects to be injected with their dependencies rather than creating them internally. This improves flexibility, testability, and scalability. In this project, we demonstrate three ways of practicing DI:
 
-Spring Web: To build RESTful web applications.
-Spring Boot: To create stand-alone Spring applications.
-Spring Data JPA: For working with relational databases using JPA.
-Hibernate: ORM tool for mapping Java objects to relational database tables.
-Lombok: To reduce boilerplate code by generating constructors, getters, setters, etc.
-PostgreSQL relational database: The database where employee data is persisted.
-Class Annotations
-@Entity
-This annotation specifies that the Employee class is an entity, meaning it is mapped to a database table. In this case, each instance of the class corresponds to a row in the employees table.
+Constructor Injection: Preferred for required dependencies.
+Setter Injection: Useful for optional or changeable dependencies.
+Field Injection: A simpler method but less preferred due to testability and immutability concerns.
 
-@Table(name = "employees")
-Specifies the table name in the database that this entity maps to. In this case, the employees table is explicitly defined.
+**Constructor Injection**
+Constructor-based dependency injection is widely considered the best practice in Spring. It ensures that all necessary dependencies are provided when an object is instantiated and helps maintain immutability.
 
-@Id
-This annotation marks the id field as the primary key of the entity.
+Example: EmployeeController.java
 
-@GeneratedValue(strategy = GenerationType.IDENTITY)
-Defines the generation strategy for the primary key. The IDENTITY strategy indicates that the database will automatically generate and manage the primary key values (usually for auto-increment fields).
+@RestController
+@RequestMapping("/api/employees")
+public class EmployeeController {
 
-@Column(name = "first_name")
-This annotation defines the column name in the database that the field will be mapped to. Here, the firstName field is mapped to the first_name column. By default, column names are derived from the field names, but the name attribute can be used to customize it.
+   ** private final EmployeeService employeeService;**
 
-@Column(nullable = false, unique = true)
-This annotation on the email field defines additional constraints:
-
-nullable = false: The column cannot be null (i.e., email is mandatory).
-unique = true: Ensures that the email address must be unique in the database.
-@Lob
-The @Lob annotation on the profilePicture field indicates that it is a "Large Object." This is often used for handling large data such as binary files or large strings. In this case, it's used to store image data in the form of a byte array.
-
-@CreationTimestamp
-This annotation automatically populates the createdDate field with the timestamp of when the entity was created. It is handled by Hibernate.
-
-@UpdateTimestamp
-Similarly, the updatedDate field will be automatically updated to the current timestamp when the entity is updated.
-
-Lombok Annotations
-@Data
-This is a Lombok annotation that generates boilerplate code, such as getters, setters, toString(), hashCode(), and equals() methods for the class, reducing the amount of code written manually.
-
-@AllArgsConstructor
-Generates a constructor with parameters for all the fields in the class.
-
-@NoArgsConstructor
-Generates a no-argument constructor, which is necessary for JPA to instantiate the entity.
-
-Spring Boot Setup
-application.properties
-Ensure you have configured your database settings in the application.properties or application.yml file. Here is an example:
-
-spring.application.name=flexisafinternshipapp
-spring.datasource.url=jdbc:postgresql://localhost:5432/ems
-spring.datasource.username=postgres
-spring.datasource.password=jarule
-spring.datasource.driver-class-name=org.postgresql.Driver
-
-spring.jpa.hibernate.ddl-auto=update
-Main Application Class
-@SpringBootApplication
-public class EmployeeManagementApplication {
-    public static void main(String[] args) {
-        SpringApplication.run(EmployeeManagementApplication.class, args);
+    // Constructor Injection
+   @Autowired
+    public EmployeeController(EmployeeService employeeService) {
+        this.employeeService = employeeService;
     }
+
 }
-@SpringBootApplication: This annotation is used to mark the main class of a Spring Boot application. It combines the functionality of @Configuration, @EnableAutoConfiguration, and @ComponentScan.
-SpringApplication.run: This method launches the application.
 
-# Spring Boot Application with Flyway Database Migrations
+Why Constructor Injection?
 
-The project has included demonstration on how to use Flyway for managing database schema migrations in a Spring Boot application. Flyway is configured to handle schema changes automatically through versioned SQL migration scripts.
+Immutability: Dependencies are set once and can't be changed.
+Testability: Allows easier injection of mock dependencies in unit tests.
+Clarity: Required dependencies are explicitly listed in the constructor.
+Setter Injection
+Setter-based dependency injection allows injecting dependencies via public setter methods. It's useful for optional dependencies that might need to change after object construction.
 
-## Features
-- **Spring Boot** and **Flyway** integration for database migration.
-- Initial migration to create the `employees` table.
-- A second migration to add the `age` column to the `employees` table.
+Example: EmployeeController.java
+@RestController
+@RequestMapping("/api/employees")
+public class EmployeeController {
 
-## Technologies Used
-- Spring Boot
-- Flyway for database migrations
-- PostgreSQL (or any other RDBMS)
+   private EmployeeService employeeService;
 
-## Database Migrations
+    // Setter Injection
+   @Autowired
+    public void setEmployeeService(EmployeeService employeeService) {
+        this.employeeService = employeeService;
+    }
 
-Flyway is set up to manage schema changes using SQL migration scripts located in the `src/main/resources/db/migration/` directory.
+    
+}
+When to Use Setter Injection?
 
-### 1. Initial Migration (`V1__Create_employees_table.sql`)
-The first migration script creates the `employees` table with the following fields:
-- `id` (Primary Key)
-- `first_name`
-- `last_name`
-- `email`
-- `username`
-- `profile_picture`
-- `address`
-- `gender`
-- `created_date` (Automatically generated timestamp)
-- `updated_date` (Automatically updated timestamp)
+Optional Dependencies: When dependencies are not always required or can be updated after object creation.
+Flexibility: Allows dependencies to be modified post-construction.
+Field Injection
+Field-based injection directly injects the dependency into the class field using the @Autowired annotation. This is a quick way to inject dependencies but is generally less favored compared to constructor injection.
 
-**Migration Script**: [`V1__Create_employees_table.sql`](src/main/resources/db/migration/V1__Create_employees_table.sql)
+Example: EmployeeController.java
+@RestController
+@RequestMapping("/api/employees")
+public class EmployeeController {
 
-```sql
-CREATE TABLE employees (
-    id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    first_name VARCHAR(255),
-    last_name VARCHAR(255),
-    email VARCHAR(255) NOT NULL UNIQUE,
-    user_name VARCHAR(255),
-    profile_picture LONGBLOB,
-    address VARCHAR(255),
-    gender VARCHAR(50),
-    created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-);
+    // Field Injection
+@Autowired
+private EmployeeService employeeService;
+    
+}
+Limitations of Field Injection:
+
+Testability: More difficult to test because it requires reflection to inject mock dependencies.
+Immutability: Fields are not final, making them mutable after object creation.
+Implicit Dependencies: Dependencies are not explicitly listed in the constructor, reducing clarity.
+
+Conclusion
+This project demonstrates different ways to implement Dependency Injection in Spring Boot using constructors, setters, and fields. Each method has its advantages and use cases, but constructor injection is generally the preferred method for required dependencies due to its benefits in immutability and testability.
+
+Feel free to explore the project, and contribute if you'd like to improve or extend its functionality!
 
