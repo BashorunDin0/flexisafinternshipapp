@@ -1,84 +1,95 @@
-This project is a simple Spring Boot-based REST API for managing employee data. It demonstrates how to use Dependency Injection (DI) in Spring using different methods such as constructor injection, setter injection, and field injection.
+Employee Management Spring Boot Application
+
+This is a simple Employee Management RESTful API built with Spring Boot. It provides basic CRUD operations for managing employee records and demonstrates a layered architecture with exception handling, input validation, and well-structured service, repository, and controller layers.
 
 Features
-Create, read, update, and delete (CRUD) operations on employee entities.
-Implements best practices in Spring for dependency injection.
-Example usage of @RestController, @Service, and @Repository annotations.
-DTO pattern for data transfer.
-Dependency Injection Overview
-In Spring, Dependency Injection (DI) allows objects to be injected with their dependencies rather than creating them internally. This improves flexibility, testability, and scalability. In this project, we demonstrate three ways of practicing DI:
 
-Constructor Injection: Preferred for required dependencies.
-Setter Injection: Useful for optional or changeable dependencies.
-Field Injection: A simpler method but less preferred due to testability and immutability concerns.
+- **CRUD Endpoints**: Create, Read, Update, and Delete employees.
+- **Layered Architecture**: Service, Repository, and Controller layers for clean separation of concerns.
+- **Input Validation**: Ensures valid input data using `@Valid` and custom validations.
+- **Exception Handling**: Custom exceptions for clear, consistent error messages and HTTP status codes.
 
-**Constructor Injection**
-Constructor-based dependency injection is widely considered the best practice in Spring. It ensures that all necessary dependencies are provided when an object is instantiated and helps maintain immutability.
+Technologies Used
 
-Example: EmployeeController.java
+- Java 17
+- Spring Boot 3.3.3
+- Spring Data JPA
+- Postgresql database
+- Spring Validation
 
-@RestController
-@RequestMapping("/api/employees")
-public class EmployeeController {
+   The application will start on `http://localhost:8080`.
 
-   ** private final EmployeeService employeeService;**
+## API Endpoints
 
-    // Constructor Injection
-   @Autowired
-    public EmployeeController(EmployeeService employeeService) {
-        this.employeeService = employeeService;
-    }
+### 1. Create Employee
 
-}
+- **URL**: `/api/employees`
+- **Method**: `POST`
+- **Request Body**: JSON representation of the employee object
 
-Why Constructor Injection?
+  ```json
+  {
+    "firstName": "John",
+    "lastName": "Doe",
+    "email": "john.doe@example.com"
+  }
+  ```
 
-Immutability: Dependencies are set once and can't be changed.
-Testability: Allows easier injection of mock dependencies in unit tests.
-Clarity: Required dependencies are explicitly listed in the constructor.
-Setter Injection
-Setter-based dependency injection allows injecting dependencies via public setter methods. It's useful for optional dependencies that might need to change after object construction.
+- **Response**: `201 Created`
 
-Example: EmployeeController.java
-@RestController
-@RequestMapping("/api/employees")
-public class EmployeeController {
+### 2. Get Employee by ID
 
-   private EmployeeService employeeService;
+- **URL**: `/api/employees/{id}`
+- **Method**: `GET`
+- **Response**: `200 OK` with JSON employee data or `404 Not Found` if the employee does not exist.
 
-    // Setter Injection
-   @Autowired
-    public void setEmployeeService(EmployeeService employeeService) {
-        this.employeeService = employeeService;
-    }
+### 3. Get All Employees
 
-    
-}
-When to Use Setter Injection?
+- **URL**: `/api/employees`
+- **Method**: `GET`
+- **Response**: `200 OK` with a list of all employees.
 
-Optional Dependencies: When dependencies are not always required or can be updated after object creation.
-Flexibility: Allows dependencies to be modified post-construction.
-Field Injection
-Field-based injection directly injects the dependency into the class field using the @Autowired annotation. This is a quick way to inject dependencies but is generally less favored compared to constructor injection.
+### 4. Update Employee
 
-Example: EmployeeController.java
-@RestController
-@RequestMapping("/api/employees")
-public class EmployeeController {
+- **URL**: `/api/employees/{id}`
+- **Method**: `PUT`
+- **Request Body**: JSON with updated employee data
+- **Response**: `200 OK` if successful, `404 Not Found` if the employee does not exist.
 
-    // Field Injection
-@Autowired
-private EmployeeService employeeService;
-    
-}
-Limitations of Field Injection:
+### 5. Delete Employee
 
-Testability: More difficult to test because it requires reflection to inject mock dependencies.
-Immutability: Fields are not final, making them mutable after object creation.
-Implicit Dependencies: Dependencies are not explicitly listed in the constructor, reducing clarity.
+- **URL**: `/api/employees/{id}`
+- **Method**: `DELETE`
+- **Response**: `200 OK` with a confirmation message or `404 Not Found` if the employee does not exist.
 
-Conclusion
-This project demonstrates different ways to implement Dependency Injection in Spring Boot using constructors, setters, and fields. Each method has its advantages and use cases, but constructor injection is generally the preferred method for required dependencies due to its benefits in immutability and testability.
+## Layers
 
-Feel free to explore the project, and contribute if you'd like to improve or extend its functionality!
+### 1. Controller Layer (`EmployeeController`)
+
+Handles HTTP requests and responses for the `/api/employees` endpoints, delegating business logic to the service layer.
+
+### 2. Service Layer (`EmployeeService`)
+
+Contains business logic for managing employees and handles interactions with the repository.
+
+### 3. Repository Layer (`EmployeeRepo`)
+
+Extends `JpaRepository` to provide CRUD operations on the database.
+
+## Exception Handling
+
+Custom exceptions and a global exception handler ensure consistent error responses:
+
+- **`EmployeeNotFoundException`**: Thrown when an employee with a given ID is not found.
+- **Global Exception Handler**: Maps exceptions to appropriate HTTP status codes and messages.
+
+## Input Validation
+
+The application uses `@Valid` and custom constraints to validate inputs in the `EmployeeDto` class:
+
+java
+
+
+Invalid requests will automatically return a `400 Bad Request` with validation error messages.
+
 
