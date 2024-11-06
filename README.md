@@ -1,95 +1,87 @@
-Employee Management Spring Boot Application
+Employee Management REST API
+This project demonstrates a REST API for managing employees with best practices in error handling, Swagger UI documentation, and HATEOAS (Hypermedia as the Engine of Application State) integration.
 
-This is a simple Employee Management RESTful API built with Spring Boot. It provides basic CRUD operations for managing employee records and demonstrates a layered architecture with exception handling, input validation, and well-structured service, repository, and controller layers.
+Technologies
+Java (JDK 17)
+Spring Boot (3.3.3)
+Spring Data JPA (with Hibernate)
+Postgresql
+Spring HATEOAS
+Swagger/OpenAPI for API documentation
+Spring Boot Starter Web
+**Features**
+CRUD Operations: Basic create, read, update, and delete functionality for Employee entities.
+HATEOAS Integration: Adds HATEOAS links to responses for easy API navigation.
+Detailed Error Handling: Returns standardized JSON error responses for easier debugging and error handling on the client side.
+Swagger UI Documentation: Automatically generated documentation for exploring API endpoints.
+Getting Started
+Access Swagger UI: After starting the application, navigate to http://localhost:8080/swagger-ui.html to explore API documentation.
 
-Features
+Error Handling
+This project follows best practices in error handling by providing a consistent error response structure for all API requests:
 
-- **CRUD Endpoints**: Create, Read, Update, and Delete employees.
-- **Layered Architecture**: Service, Repository, and Controller layers for clean separation of concerns.
-- **Input Validation**: Ensures valid input data using `@Valid` and custom validations.
-- **Exception Handling**: Custom exceptions for clear, consistent error messages and HTTP status codes.
+Global Exception Handler: A GlobalExceptionHandler is used to manage exceptions at a global level using @ControllerAdvice.
+Standardized Error Response: Custom error responses include:
+status: Error type (e.g., "error").
+message: Detailed error message.
+code: HTTP status code.
+Example of a 404 Not Found error response:
 
-Technologies Used
+json
+Copy code
+{
+    "status": "error",
+    "message": "Employee not found",
+    "code": 404
+}
+Swagger UI Documentation
+The API is documented with Swagger using Springdoc OpenAPI 3.0, allowing developers to explore available endpoints and try out API requests directly from the browser.
 
-- Java 17
-- Spring Boot 3.3.3
-- Spring Data JPA
-- Postgresql database
-- Spring Validation
+Key Points:
+Annotations: Each controller method is annotated with @Operation and @ApiResponses to provide descriptions, response codes, and parameter details.
+Interactive API: Swagger UI provides a user-friendly interface to interact with the API without needing additional tools.
+To view the API documentation, open http://localhost:8080/swagger-ui.html after running the application.
 
-   The application will start on `http://localhost:8080`.
+HATEOAS Integration
+HATEOAS adds relevant links to each resource, making the API more self-discoverable and user-friendly for clients.
 
-## API Endpoints
+Self Links: Each employee includes a link to retrieve its own details (self link).
+Collection Links: Every Employee response includes a link to list all employees.
+Update and Delete Links: Links to update or delete the specific employee are provided for easy navigation.
+Example HATEOAS Response for an Employee:
+json
+Copy code
+{
+    "id": 1,
+    "firstName": "Ola",
+    "lastName": "Wale",
+    "email": "ola.wale@example.com",
+    "username": "olawale",
+    "address": "154 Effurun, Warri",
+    "gender": "Male",
+    "_links": {
+        "self": {
+            "href": "http://localhost:8080/api/employees/1"
+        },
+        "all-employees": {
+            "href": "http://localhost:8080/api/employees"
+        },
+        "update-employee": {
+            "href": "http://localhost:8080/api/employees/1"
+        },
+        "delete-employee": {
+            "href": "http://localhost:8080/api/employees/1"
+        }
+    }
+}
+Project Structure
+Controller: Contains the main REST API endpoints.
+Service: Business logic for handling employee data.
+Repository: Handles data persistence using Spring Data JPA.
+Exception: Centralized exception handling and custom exception classes.
+DTO: Data Transfer Object for Employee data representation.
+Model: Entity model mapped to the database.
 
-### 1. Create Employee
-
-- **URL**: `/api/employees`
-- **Method**: `POST`
-- **Request Body**: JSON representation of the employee object
-
-  ```json
-  {
-    "firstName": "John",
-    "lastName": "Doe",
-    "email": "john.doe@example.com"
-  }
-  ```
-
-- **Response**: `201 Created`
-
-### 2. Get Employee by ID
-
-- **URL**: `/api/employees/{id}`
-- **Method**: `GET`
-- **Response**: `200 OK` with JSON employee data or `404 Not Found` if the employee does not exist.
-
-### 3. Get All Employees
-
-- **URL**: `/api/employees`
-- **Method**: `GET`
-- **Response**: `200 OK` with a list of all employees.
-
-### 4. Update Employee
-
-- **URL**: `/api/employees/{id}`
-- **Method**: `PUT`
-- **Request Body**: JSON with updated employee data
-- **Response**: `200 OK` if successful, `404 Not Found` if the employee does not exist.
-
-### 5. Delete Employee
-
-- **URL**: `/api/employees/{id}`
-- **Method**: `DELETE`
-- **Response**: `200 OK` with a confirmation message or `404 Not Found` if the employee does not exist.
-
-## Layers
-
-### 1. Controller Layer (`EmployeeController`)
-
-Handles HTTP requests and responses for the `/api/employees` endpoints, delegating business logic to the service layer.
-
-### 2. Service Layer (`EmployeeService`)
-
-Contains business logic for managing employees and handles interactions with the repository.
-
-### 3. Repository Layer (`EmployeeRepo`)
-
-Extends `JpaRepository` to provide CRUD operations on the database.
-
-## Exception Handling
-
-Custom exceptions and a global exception handler ensure consistent error responses:
-
-- **`EmployeeNotFoundException`**: Thrown when an employee with a given ID is not found.
-- **Global Exception Handler**: Maps exceptions to appropriate HTTP status codes and messages.
-
-## Input Validation
-
-The application uses `@Valid` and custom constraints to validate inputs in the `EmployeeDto` class:
-
-java
-
-
-Invalid requests will automatically return a `400 Bad Request` with validation error messages.
+By following these best practices, this project aims to provide a robust and user-friendly REST API for employee management.
 
 
