@@ -1,7 +1,9 @@
 package com.wale.flexisafbackendinternship.flexisafinternshipapp.dto;
 
 
+import com.wale.flexisafbackendinternship.flexisafinternshipapp.Controller.EmployeeController;
 import lombok.*;
+import org.springframework.hateoas.RepresentationModel;
 
 
 import java.time.LocalDateTime;
@@ -10,7 +12,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 
-public class EmployeeDto {
+public class EmployeeDto extends RepresentationModel<EmployeeDto> {
     private Long id;
     private String firstName;
     private String lastName;
@@ -21,4 +23,5 @@ public class EmployeeDto {
     private String gender;
     private LocalDateTime createdDate;
     private LocalDateTime updatedDate;
+
 }

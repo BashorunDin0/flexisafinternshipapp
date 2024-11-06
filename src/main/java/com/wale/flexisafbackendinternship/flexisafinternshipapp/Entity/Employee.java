@@ -25,7 +25,6 @@ public class Employee {
     private String email;
     @Column(name = "user_name")
     private String username;
-    @Lob
     @Column(name = "profile_picture")
     private byte[] profilePicture;
     private String address;
