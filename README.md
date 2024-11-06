@@ -1,73 +1,95 @@
-Employee Entity with Annotations - Spring Boot Project
-Overview
-This project demonstrates a Spring Boot application that manages employee data using Postgresql relational database, while using Hibernate annotation to design a database table(Entity) with atleast 10 fields. The Employee class represents an entity with fields like id, firstName, lastName, email, profilePicture, address, gender, and timestamps for creation and modification.
+Employee Management Spring Boot Application
 
-Dependencies
-The project uses the following dependencies:
+This is a simple Employee Management RESTful API built with Spring Boot. It provides basic CRUD operations for managing employee records and demonstrates a layered architecture with exception handling, input validation, and well-structured service, repository, and controller layers.
 
-Spring Web: To build RESTful web applications.
-Spring Boot: To create stand-alone Spring applications.
-Spring Data JPA: For working with relational databases using JPA.
-Hibernate: ORM tool for mapping Java objects to relational database tables.
-Lombok: To reduce boilerplate code by generating constructors, getters, setters, etc.
-PostgreSQL relational database: The database where employee data is persisted.
-Class Annotations
-@Entity
-This annotation specifies that the Employee class is an entity, meaning it is mapped to a database table. In this case, each instance of the class corresponds to a row in the employees table.
+Features
 
-@Table(name = "employees")
-Specifies the table name in the database that this entity maps to. In this case, the employees table is explicitly defined.
+- **CRUD Endpoints**: Create, Read, Update, and Delete employees.
+- **Layered Architecture**: Service, Repository, and Controller layers for clean separation of concerns.
+- **Input Validation**: Ensures valid input data using `@Valid` and custom validations.
+- **Exception Handling**: Custom exceptions for clear, consistent error messages and HTTP status codes.
 
-@Id
-This annotation marks the id field as the primary key of the entity.
+Technologies Used
 
-@GeneratedValue(strategy = GenerationType.IDENTITY)
-Defines the generation strategy for the primary key. The IDENTITY strategy indicates that the database will automatically generate and manage the primary key values (usually for auto-increment fields).
+- Java 17
+- Spring Boot 3.3.3
+- Spring Data JPA
+- Postgresql database
+- Spring Validation
 
-@Column(name = "first_name")
-This annotation defines the column name in the database that the field will be mapped to. Here, the firstName field is mapped to the first_name column. By default, column names are derived from the field names, but the name attribute can be used to customize it.
+   The application will start on `http://localhost:8080`.
 
-@Column(nullable = false, unique = true)
-This annotation on the email field defines additional constraints:
+## API Endpoints
 
-nullable = false: The column cannot be null (i.e., email is mandatory).
-unique = true: Ensures that the email address must be unique in the database.
-@Lob
-The @Lob annotation on the profilePicture field indicates that it is a "Large Object." This is often used for handling large data such as binary files or large strings. In this case, it's used to store image data in the form of a byte array.
+### 1. Create Employee
 
-@CreationTimestamp
-This annotation automatically populates the createdDate field with the timestamp of when the entity was created. It is handled by Hibernate.
+- **URL**: `/api/employees`
+- **Method**: `POST`
+- **Request Body**: JSON representation of the employee object
 
-@UpdateTimestamp
-Similarly, the updatedDate field will be automatically updated to the current timestamp when the entity is updated.
+  ```json
+  {
+    "firstName": "John",
+    "lastName": "Doe",
+    "email": "john.doe@example.com"
+  }
+  ```
 
-Lombok Annotations
-@Data
-This is a Lombok annotation that generates boilerplate code, such as getters, setters, toString(), hashCode(), and equals() methods for the class, reducing the amount of code written manually.
+- **Response**: `201 Created`
 
-@AllArgsConstructor
-Generates a constructor with parameters for all the fields in the class.
+### 2. Get Employee by ID
 
-@NoArgsConstructor
-Generates a no-argument constructor, which is necessary for JPA to instantiate the entity.
+- **URL**: `/api/employees/{id}`
+- **Method**: `GET`
+- **Response**: `200 OK` with JSON employee data or `404 Not Found` if the employee does not exist.
 
-Spring Boot Setup
-application.properties
-Ensure you have configured your database settings in the application.properties or application.yml file. Here is an example:
+### 3. Get All Employees
 
-spring.application.name=flexisafinternshipapp
-spring.datasource.url=jdbc:postgresql://localhost:5432/ems
-spring.datasource.username=postgres
-spring.datasource.password=jarule
-spring.datasource.driver-class-name=org.postgresql.Driver
+- **URL**: `/api/employees`
+- **Method**: `GET`
+- **Response**: `200 OK` with a list of all employees.
 
-spring.jpa.hibernate.ddl-auto=update
-Main Application Class
-@SpringBootApplication
-public class EmployeeManagementApplication {
-    public static void main(String[] args) {
-        SpringApplication.run(EmployeeManagementApplication.class, args);
-    }
-}
-@SpringBootApplication: This annotation is used to mark the main class of a Spring Boot application. It combines the functionality of @Configuration, @EnableAutoConfiguration, and @ComponentScan.
-SpringApplication.run: This method launches the application.
+### 4. Update Employee
+
+- **URL**: `/api/employees/{id}`
+- **Method**: `PUT`
+- **Request Body**: JSON with updated employee data
+- **Response**: `200 OK` if successful, `404 Not Found` if the employee does not exist.
+
+### 5. Delete Employee
+
+- **URL**: `/api/employees/{id}`
+- **Method**: `DELETE`
+- **Response**: `200 OK` with a confirmation message or `404 Not Found` if the employee does not exist.
+
+## Layers
+
+### 1. Controller Layer (`EmployeeController`)
+
+Handles HTTP requests and responses for the `/api/employees` endpoints, delegating business logic to the service layer.
+
+### 2. Service Layer (`EmployeeService`)
+
+Contains business logic for managing employees and handles interactions with the repository.
+
+### 3. Repository Layer (`EmployeeRepo`)
+
+Extends `JpaRepository` to provide CRUD operations on the database.
+
+## Exception Handling
+
+Custom exceptions and a global exception handler ensure consistent error responses:
+
+- **`EmployeeNotFoundException`**: Thrown when an employee with a given ID is not found.
+- **Global Exception Handler**: Maps exceptions to appropriate HTTP status codes and messages.
+
+## Input Validation
+
+The application uses `@Valid` and custom constraints to validate inputs in the `EmployeeDto` class:
+
+java
+
+
+Invalid requests will automatically return a `400 Bad Request` with validation error messages.
+
+
