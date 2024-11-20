@@ -1,6 +1,7 @@
 package com.wale.flexisafbackendinternship.flexisafinternshipapp.Service.impl;
 
 import com.wale.flexisafbackendinternship.flexisafinternshipapp.Entity.Employee;
+import com.wale.flexisafbackendinternship.flexisafinternshipapp.Exception.EmailAlreadyExistsException;
 import com.wale.flexisafbackendinternship.flexisafinternshipapp.Exception.EmployeeNotFoundException;
 import com.wale.flexisafbackendinternship.flexisafinternshipapp.Mapper.EmployeeMapper;
 import com.wale.flexisafbackendinternship.flexisafinternshipapp.Repository.EmployeeRepo;
@@ -19,6 +20,13 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public EmployeeDto createEmployee(EmployeeDto employeeDto) {
+        if (employeeRepo.existsByEmail(employeeDto.getEmail())) {
+            try {
+                throw new EmailAlreadyExistsException("An employee with this email already exists: " + employeeDto.getEmail());
+            } catch (EmailAlreadyExistsException e) {
+                throw new RuntimeException(e);
+            }
+        }
 
         Employee employee = EmployeeMapper.mapToEmployee(employeeDto);
         Employee savedEmployee = employeeRepo.save(employee);
